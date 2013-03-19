@@ -190,7 +190,7 @@ Value stop(const Array& params, bool fHelp)
 
 //
 // Call Table
-//
+// GetDataDir()
 
 
 static const CRPCCommand vRPCCommands[] =

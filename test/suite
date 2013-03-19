@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+LAST_TEST="<none>"
+
+function assertBitcoindRunning() {
+  PS_RES=`ps aux | grep [b]itcoind`
+  if [ -z "$PS_RES" ]; then
+    echo "Bitcoin isn't running. last test: $LAST_TEST"
+    exit 1
+  fi
+}
+
+function runTest() {
+  assertBitcoindRunning
+  LAST_TEST="$1"
+  TEST_RESULT=`./btccurl $1`
+  ERRORS=`echo "$TEST_RESULT" | jq '.error'`
+  RESULT=`echo "$TEST_RESULT" | jq '.result'`
+}
+
+function shouldFail {
+  runTest $1
+  if [[ "$ERRORS" == "null" ]]; then
+    echo "$1 expected failure!"
+  fi
+  if [[ "$RESULT" != "null" ]]; then
+    echo "$1 expected failure, but succeded with: $RESULT!"
+  fi
+}
+
+function shouldPass {
+  runTest $1
+  if [[ "$ERRORS" != "null" ]]; then
+    echo "$1 failed with: $ERRORS"
+  fi
+  if [[ "$RESULT" == "null" ]]; then
+    echo "$1 expected result!"
+  fi
+}
+
+pushd test/ >/dev/null
+
+shouldFail testecho_empty.json
+shouldPass testecho.json
+
+assertBitcoindRunning
+popd >/dev/null

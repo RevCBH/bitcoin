@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+curl -H "Accept: application/json" \
+     -H "Content-type: application/json" \
+     -X POST \
+     --silent \
+     -d @$1 http://bitcoinrpc:Ar4e8gtP7mjqnCunXEQ62pDb3VkCs8sNnzBtksLxCpKx@localhost:8332/
+
